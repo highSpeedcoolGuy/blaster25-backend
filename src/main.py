@@ -30,3 +30,4 @@ async def extract_text(file: UploadFile = File(...)):
 # async def process_test(input_text: str):
 #     response = client.chat.completions.create()
 #     print("Calling groq")
+
