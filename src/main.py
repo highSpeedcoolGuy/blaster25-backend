@@ -37,35 +37,35 @@ def read_root():
 # Takes png and outputs text and ? images
 @app.post("/extract-text/")
 async def extract_text(file: UploadFile = File(...)):
-    image = Image.open(io.BytesIO(await file.read()))
-    extracted_text = pytesseract.image_to_string(image)
+    #image = Image.open(io.BytesIO(await file.read()))
+    #extracted_text = pytesseract.image_to_string(image)
     
     print("Pre processing with OCR")
     await process_text("Hello")
-    await access_groq()
+    return_val = await access_groq()
 
-    return {"extracted_text": extracted_text}
+    return {"extracted_text": return_val}
     # await groq_image_access()
 
 
 async def process_text(input_text: str):
 
     print("Calling something else")
+with open('/Users/ajmendes/backend/uploads/prompt.txt', 'r') as f:
+    prompt_content = f.read()
 
-prompt = """
+
+prompt = f"""
 You must return all the LaTeX code for the given image provided. Output all of the code. 
 
 #Important Rules: 
 You MUST start your latex code with ```latex and end with ```. 
 You must include 
-\documentclass{article}
-\begin{document}
-"""
+\documentclass{{article}}
+\begin{{document}}
+The User's prompt is as follows:
+""" + prompt_content
 
-#You must return all the LaTeX code for the given image provided. Output all of the code. 
-#Solve the equations and Provide your work, step by step, to the given questions on a line following the Solution: part. 
-#ALL PARTS MUST BE IN LATEX CODE
-#You must start your latex code with ```latex and end with ```. Remember that in LaTex, you must include newlines through \newline.
 
 async def access_groq(image_path="./src/test-images/test-1.png"):
     print("Made it to access_groq")
@@ -100,7 +100,7 @@ async def access_groq(image_path="./src/test-images/test-1.png"):
     # pprint.pp(parse_latex(completion.choices[0].message.content))
     print(parse_latex(completion.choices[0].message.content))
 
-    return (completion.choices[0].message.content)
+    return (parse_latex(completion.choices[0].message.content))
 
 
 def encode_image(image_path):
