@@ -2,7 +2,7 @@
 # Where all the files and api connections flow
 
 
-from fastapi import FastAPI,  UploadFile
+from fastapi import FastAPI,  File, UploadFile
 import pytesseract
 from PIL import Image
 from groq import Groq
@@ -27,7 +27,10 @@ def read_root():
 
 #Takes png and outputs text and ? images
 @app.post("/extract-text/")
-async def extract_text():
+async def extract_text(file: UploadFile = File(...)):
+    image = Image.open(io.BytesIO(await file.read()))
+    extracted_text = pytesseract.image_to_string(image)
+    return {"extracted_text": extracted_text}
 
     print("Pre processing with OCR")
     await process_text("Hello")
