@@ -24,10 +24,11 @@ def read_root():
 async def extract_text(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
     extracted_text = pytesseract.image_to_string(image)
+    
+    
     return {"extracted_text": extracted_text}
 
 #Groq processing right here
 # async def process_test(input_text: str):
 #     response = client.chat.completions.create()
 #     print("Calling groq")
-
