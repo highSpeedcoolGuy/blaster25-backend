@@ -2,11 +2,11 @@
 # Where all the files and api connections flow
 
 
-from fastapi import FASTAPI, FILE, UploadFile
+from fastapi import FastAPI, File, UploadFile
 import pytesseract
 from PIL import Image
 import io 
-import groqing
+import groq
 
 app = FastAPI()
 
@@ -21,14 +21,12 @@ def read_root():
 @app.get("")
 
 #Takes png and outputs text and ? images
-async def extract_text():
+async def extract_text(file: UploadFile = File(...)):
+    image = Image.open(io.BytesIO(await file.read()))
+    extracted_text = pytesseract.image_to_string(image)
+    return {"extracted_text": extracted_text}
 
-    print("Pre processing with OCR")
-
-async def process_test(input_text: str):
-
-    print("Calling groq")
-
-
-while(true):
-    break
+#Groq processing right here
+# async def process_test(input_text: str):
+#     response = client.chat.completions.create()
+#     print("Calling groq")
