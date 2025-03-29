@@ -10,21 +10,26 @@ import io
 import os
 import openai
 import base64
+import pprint
 # from groqing import groq_query
 from dotenv import load_dotenv
 load_dotenv() 
 
 app = FastAPI()
 
-
+def parse_latex(latex_text):
+   return latex_text.split("```latex")[1].split("```")[0]
 
 MODEL_NAME = "llama-3.2-90b-vision-preview"
 
+
 @app.get("/")
 def read_root():
-    return{"message": "FASTApi"}
+    return {"message": "FASTApi"}
+
 
 @app.get("")
+
 
 #Takes png and outputs text and ? images
 @app.post("/extract-text/")
@@ -32,7 +37,6 @@ async def extract_text(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
     extracted_text = pytesseract.image_to_string(image)
     
-
     print("Pre processing with OCR")
     await process_text("Hello")
     await access_groq()
@@ -44,9 +48,17 @@ async def process_text(input_text: str):
 
     print("Calling something else")
 
-async def access_groq():
+prompt = """
+You must return all the LaTeX code for the given image provided. Output everything. 
+
+You must start your latex code with ```latex and end with ```. Remember that in LaTex, you must include newlines through \newline.
+
+Try to include spacing between equations and (a) (b) etc.
+
+"""
+async def access_groq(image_path="./src/test-images/test-1.png"):
     print("Made it to access_groq")
-    image_path = "./src/test-images/test-1.png"
+    # image_path = "./src/test-images/test-1.png"
     base64_image = encode_image(image_path)
     client = openai.OpenAI(
         base_url="https://api.groq.com/openai/v1",
@@ -63,7 +75,7 @@ async def access_groq():
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "Return only the LaTeX of this equation."},
+                {"type": "text", "text": prompt},
                 {
                     "type": "image_url",
                     "image_url": {
@@ -75,9 +87,11 @@ async def access_groq():
     ],
     
 )
-    print(completion.choices[0].message)
+    # pprint.pp(parse_latex(completion.choices[0].message.content))
+    print(parse_latex(completion.choices[0].message.content))
 
-    return (completion.choices[0].message)
+    return (completion.choices[0].message.content)
+
 
 def encode_image(image_path):
   with open(image_path, "rb") as image_file:
@@ -118,11 +132,11 @@ async def groq_image_access():
    return chat_completion.choices[0].message.content
     # print(chat_completion.choices[0].message.content)
     # return(chat_completion.choices[0].message.content)
-
-
-
-if __name__ == "__main__":
-    access_groq()   
+import asyncio
+loop = asyncio.get_event_loop()
+loop.run_until_complete(access_groq('/Users/ajmendes/backend/Castro/blaster25-backend/src/test-images/test-1.png'))
+# if __name__ == "__main__":
+#     access_groq()   
 
 
 
