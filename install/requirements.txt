@@ -1,5 +1,5 @@
 
-
+numpy
 lark
 pyyaml
 python-multipart
@@ -7,3 +7,4 @@ fastapi
 pytesseract
 pytest-httpx
 groq
+opencv-python
