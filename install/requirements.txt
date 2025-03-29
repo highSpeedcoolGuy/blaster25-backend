@@ -1,0 +1,9 @@
+
+
+lark
+pyyaml
+python-multipart
+fastapi
+pytesseract
+pytest-httpx
+groq
