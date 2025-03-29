@@ -24,7 +24,7 @@ def test_home():
     
 
 def test_extract_txt():
-    img_data = create_test_image()
+    img_data = cv2.imread('/home/jabuan/BlasterHacks/blaster25-backend/src/test-images/test.png')
     
     files = {"file": ("test_image.png", img_data, "image/png")}
     response = client.post("/extract-text/", files = files)

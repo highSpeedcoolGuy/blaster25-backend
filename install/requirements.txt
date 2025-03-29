@@ -11,3 +11,6 @@ openai
 uvicorn
 dotenv
 opencv-python
+deskew
+scikit-image
+sympy
