@@ -2,7 +2,13 @@
 
 ## Before running anything, run this command inside the python virtual environment
 
-```pip install -r install/requirements.txt ```
+`pip install -r install/requirements.txt `
+To run:
+uvicorn src.main:app --reload
 
-## To run tests  
-```pytest src/tests.py -v```
+to send things to the server:
+curl -X POST http://127.0.0.1:8000/extract-text/
+
+## To run tests
+
+`pytest src/tests.py -v`
