@@ -36,8 +36,7 @@ for i in range(n_boxes):
         
         # Draw rectangle around uncertain text (for visualization)
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-
-# Save visualization image
+python-multipart
 cv2.imwrite('uncertain_regions.png', image)
 
 # Print results
