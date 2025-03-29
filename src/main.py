@@ -11,14 +11,17 @@ import os
 import openai
 import base64
 import pprint
+import asyncio
 # from groqing import groq_query
 from dotenv import load_dotenv
 load_dotenv() 
 
 app = FastAPI()
 
+
 def parse_latex(latex_text):
-   return latex_text.split("```latex")[1].split("```")[0]
+    return latex_text.split("```latex")[1].split("```")[0]
+
 
 MODEL_NAME = "llama-3.2-90b-vision-preview"
 
@@ -31,7 +34,7 @@ def read_root():
 @app.get("")
 
 
-#Takes png and outputs text and ? images
+# Takes png and outputs text and ? images
 @app.post("/extract-text/")
 async def extract_text(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
@@ -44,18 +47,26 @@ async def extract_text(file: UploadFile = File(...)):
     return {"extracted_text": extracted_text}
     # await groq_image_access()
 
+
 async def process_text(input_text: str):
 
     print("Calling something else")
 
 prompt = """
-You must return all the LaTeX code for the given image provided. Output everything. 
+You must return all the LaTeX code for the given image provided. Output all of the code. 
 
-You must start your latex code with ```latex and end with ```. Remember that in LaTex, you must include newlines through \newline.
-
-Try to include spacing between equations and (a) (b) etc.
-
+#Important Rules: 
+You MUST start your latex code with ```latex and end with ```. 
+You must include 
+\documentclass{article}
+\begin{document}
 """
+
+#You must return all the LaTeX code for the given image provided. Output all of the code. 
+#Solve the equations and Provide your work, step by step, to the given questions on a line following the Solution: part. 
+#ALL PARTS MUST BE IN LATEX CODE
+#You must start your latex code with ```latex and end with ```. Remember that in LaTex, you must include newlines through \newline.
+
 async def access_groq(image_path="./src/test-images/test-1.png"):
     print("Made it to access_groq")
     # image_path = "./src/test-images/test-1.png"
@@ -69,24 +80,23 @@ async def access_groq(image_path="./src/test-images/test-1.png"):
     # print(f"API Key: {x}")
     # print("Accessing Groq")
     completion = client.chat.completions.create( 
-    model=MODEL_NAME,
-    # model="gpt-4o",
-    messages=[
-        {
-            "role": "user",
-            "content": [
-                {"type": "text", "text": prompt},
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/jpeg;base64,{base64_image}",
+        model=MODEL_NAME,
+        # model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}",
+                        },
                     },
-                },
-            ],
-        }
-    ],
-    
-)
+                ],
+            }
+        ],
+    )
     # pprint.pp(parse_latex(completion.choices[0].message.content))
     print(parse_latex(completion.choices[0].message.content))
 
@@ -96,6 +106,7 @@ async def access_groq(image_path="./src/test-images/test-1.png"):
 def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
+
 
 async def groq_image_access():
    image_path = "./src/test-images/test-1.png"
@@ -128,13 +139,15 @@ async def groq_image_access():
     stream=False,
     stop=None,
 )
+   
    print(chat_completion.choices[0].message.content)
    return chat_completion.choices[0].message.content
     # print(chat_completion.choices[0].message.content)
     # return(chat_completion.choices[0].message.content)
-import asyncio
+
+
 loop = asyncio.get_event_loop()
-loop.run_until_complete(access_groq('/Users/ajmendes/backend/Castro/blaster25-backend/src/test-images/test-1.png'))
+loop.run_until_complete(access_groq('/Users/ajmendes/backend/uploads/test_file.png'))
 # if __name__ == "__main__":
 #     access_groq()   
 
