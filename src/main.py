@@ -8,6 +8,7 @@ from PIL import Image
 from groq import Groq
 import io 
 import os
+import openai
 import base64
 # from groqing import groq_query
 from dotenv import load_dotenv
@@ -30,36 +31,53 @@ def read_root():
 async def extract_text(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
     extracted_text = pytesseract.image_to_string(image)
-    return {"extracted_text": extracted_text}
+    
 
     print("Pre processing with OCR")
     await process_text("Hello")
     await access_groq()
-    await groq_image_access()
+
+    return {"extracted_text": extracted_text}
+    # await groq_image_access()
 
 async def process_text(input_text: str):
 
     print("Calling something else")
 
 async def access_groq():
-    client = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
-)
-    x = os.environ.get("GROQ_API_KEY")
+    print("Made it to access_groq")
+    image_path = "./src/test-images/test-1.png"
+    base64_image = encode_image(image_path)
+    client = openai.OpenAI(
+        base_url="https://api.groq.com/openai/v1",
+        api_key=os.environ.get("GROQ_API_KEY")    
+    )
+    # client = openai.OpenAI()
+    # os.environ.get("GROQ_API_KEY")
     # print(f"API Key: {x}")
     # print("Accessing Groq")
-    chat_completion = client.chat.completions.create(
+    completion = client.chat.completions.create( 
+    model=MODEL_NAME,
+    # model="gpt-4o",
     messages=[
         {
             "role": "user",
-            "content": "I am sending you a png that contains handwritten text. Convert it to LaTeX.",
+            "content": [
+                {"type": "text", "text": "Return only the LaTeX of this equation."},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{base64_image}",
+                    },
+                },
+            ],
         }
     ],
-    model=MODEL_NAME,
+    
 )
-    print(chat_completion.choices[0].message.content)
+    print(completion.choices[0].message)
 
-    return chat_completion.choices[0].message.content
+    return (completion.choices[0].message)
 
 def encode_image(image_path):
   with open(image_path, "rb") as image_file:
@@ -96,6 +114,7 @@ async def groq_image_access():
     stream=False,
     stop=None,
 )
+   print(chat_completion.choices[0].message.content)
    return chat_completion.choices[0].message.content
     # print(chat_completion.choices[0].message.content)
     # return(chat_completion.choices[0].message.content)
