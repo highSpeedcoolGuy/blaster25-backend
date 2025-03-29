@@ -47,7 +47,7 @@ async def access_groq():
     messages=[
         {
             "role": "user",
-            "content": "Explain the importance of fast language models",
+            "content": "I am sending you a png that contains handwritten text. Convert it to LaTeX.",
         }
     ],
     model=MODEL_NAME,
