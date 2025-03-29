@@ -1,0 +1,36 @@
+RECOGNIZED TEXT (HIGH CONFIDENCE):
+---------------------------------
+
+
+UNCERTAIN REGIONS:
+-----------------
+Region 1:
+  Attempted text: 'Sin'
+  Confidence: 51
+  Coordinates: (1399, 1251, 491, 404)
+
+Region 2:
+  Attempted text: 'dd'
+  Confidence: 28
+  Coordinates: (2047, 1283, 301, 250)
+
+Region 3:
+  Attempted text: '\'
+  Confidence: 85
+  Coordinates: (304, 1827, 60, 287)
+
+Region 4:
+  Attempted text: 'ago'
+  Confidence: 29
+  Coordinates: (502, 1851, 453, 285)
+
+Region 5:
+  Attempted text: '©'
+  Confidence: 59
+  Coordinates: (1191, 1858, 148, 197)
+
+Region 6:
+  Attempted text: 'NF'
+  Confidence: 17
+  Coordinates: (1651, 1884, 322, 211)
+

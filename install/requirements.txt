@@ -1,5 +1,5 @@
 
-
+numpy
 lark
 pyyaml
 python-multipart
@@ -10,3 +10,4 @@ groq
 openai
 uvicorn
 dotenv
+opencv-python
